@@ -1,7 +1,8 @@
-import json
-from collections import OrderedDict, namedtuple
-import cv2
 import argparse
+import json
+from collections import OrderedDict
+
+import cv2
 
 from ocr import get_slide_texts, best_slide, get_image_text, filter_text
 from video_processing import video_to_slide_imgs
@@ -52,11 +53,11 @@ if __name__ == "__main__":
             img_text = filter_text(img_text)
             best_slide_i, ratio = best_slide(img_text, slide_texts, args.text_len_tresh)  # lower ratio better
             if args.verbose:
-                print(str(i_img) + ")", tmstmp, ":", "slide=", best_slide_i, "ratio=", ratio, '\t', img_text)
+                print(str(i_img) + ")", tmstmp, "ms", "slide=", best_slide_i, "ratio=", ratio, '\t', img_text)
             if best_slide_i != -1:  # check if detected img contains text (is slide)
                 result.append((tmstmp, best_slide_i))
         except Exception as e:
-            print("Error tmstmp=", tmstmp, " img_num=", i_img, "img_shape=", img.shape, ":", e)
+            print("Error tmstmp=", tmstmp, "ms img_num=", i_img, "img_shape=", img.shape, ":", e)
             cv2.imshow("error img", img)
 
     with open(args.output_path, "w") as f:

@@ -1,4 +1,3 @@
-# 2b811a3cdb09ca9b525bc073e91af4f3
 import pytesseract
 from pytesseract import Output
 import textract
