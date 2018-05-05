@@ -1,3 +1,7 @@
+## Video slides handling
+Slides on video detection and timestamps assignment.
+
+Useful for handling laction videos. You need to have video and pdf slides.  
 #### Dependencies
 Install opencv and opencv-python
 
