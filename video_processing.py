@@ -37,7 +37,7 @@ def video_to_slide_imgs(file_path, time_period=1, max_cntr_area=0.95, min_cntr_a
     frames_period = time_period * cap.get(cv2.CAP_PROP_FPS)
     frames_from_last_tick = 0
     result_imgs = dict()
-    i_frame = 0
+    i_frame = frames_period-1
     while True:
         ret, frame = cap.read()
         tmstmp = int(cap.get(cv2.CAP_PROP_POS_MSEC))
@@ -68,8 +68,9 @@ def video_to_slide_imgs(file_path, time_period=1, max_cntr_area=0.95, min_cntr_a
             if 4 <= len(approx_cnt) <= 4:
                 # cropping from frame and perspective transformation of contour
                 trnsfrmed_img = four_point_transform(frame, approx_cnt)
+                # print(trnsfrmed_img.shape)
                 frames_from_last_tick = 0
-                result_imgs[tmstmp/1000] = trnsfrmed_img.copy()
+                result_imgs[tmstmp] = trnsfrmed_img.copy()
                 break
 
     return result_imgs

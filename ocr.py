@@ -16,8 +16,9 @@ def get_slide_texts(path):
 def filter_text(text):
     res = filter(lambda x: "а" <= x <= "я" or "А" <= x <= "Я" or
                            "a" <= x <= "z" or "A" <= x <= "Z", text)
-    # res = text
-    return "".join(res)
+                            # or x == " " or x == "\n", text)
+    res = "".join(res).lower()
+    return res
 
 
 def get_image_text(img, lang="rus+eng"):
@@ -31,15 +32,23 @@ def strings_similarity(str1, str2):
 
 def best_slide(img_text, slide_texts, len_text_tresh):
     best_ratio = float('inf')
+    best_ratio_cnt = 1
     best_i = -1
     for i, slide in enumerate(slide_texts):
         if len(slide) == 0 or len(img_text) / len(slide) <= len_text_tresh:
             continue
         ratio = (editdistance.eval(img_text, slide) - (len(slide) - len(img_text))) / len(img_text)
         # dist = strings_similarity(img_text, slide)
+        if ratio == best_ratio:
+            best_ratio_cnt += 1
+
         if ratio < best_ratio:
             best_i = i
             best_ratio = ratio
+            best_ratio_cnt = 1
+
+    if best_ratio_cnt > 1:
+        return -1, best_ratio
     return best_i, best_ratio
 
 
