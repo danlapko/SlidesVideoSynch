@@ -89,4 +89,4 @@ def four_point_transform(image, pts):
 #                       cv2.compareHist(slide_hist, frame_hist, cv2.HISTCMP_CHISQR),
 #                       )
 
-# cv2.imwrite("tmp/out-{}.png".format(i_frame), img)
+# cv2.imwrite("tmp/out-{}.png".format(tmstmp), img)

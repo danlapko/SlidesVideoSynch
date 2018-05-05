@@ -1,20 +1,19 @@
+import json
+
 import cv2
 
 from ocr import get_slide_texts, best_slide, get_image_text, filter_text
 from video_processing import video_to_slide_imgs
 
-# slides_path = "data/cpp_lec6.pdf"
-# video_path = "data/cpp_short.mp4"
-
 slides_path = "data/logic_lec9.pdf"
-video_path = "data/logic_short.mp4"
+video_path = "data/logic_short2.mp4"
 
 time_period = 1  # sec
-max_cntr_area = 0.95
+max_cntr_area = 0.95  # detected slide rectangle max area
 min_cntr_area = 0.3
 
 lang = "rus+eng"
-text_len_tresh = 0.1
+text_len_tresh = 0.1  # min ratio (detected text length)/(slide text length)
 
 if __name__ == "__main__":
 
@@ -26,14 +25,14 @@ if __name__ == "__main__":
     print("len video_imgs:", len(video_imgs))
 
     result = dict()
-    for i_frame, img in video_imgs.items():
-        # cool_img = cv2.Canny(cv2.cvtColor(img, cv2.COLOR_BGR2GRAY),10,30)
-        cv2.imwrite("tmp/cool{}_.png".format(i_frame), img)
+
+    for tmstmp, img in video_imgs.items():
+        cv2.imwrite("tmp/cool{}_.png".format(tmstmp), img)
         img_text = get_image_text(img, lang=lang)
         img_text = filter_text(img_text)
-        best_slide_i = best_slide(img_text, slide_texts, text_len_tresh)
-        result[i_frame] = (img, best_slide_i)
-        print(i_frame, ":", best_slide_i)
-        print(img_text)
+        best_slide_i, ratio = best_slide(img_text, slide_texts, text_len_tresh)
+        result[tmstmp] = best_slide_i
+        print(tmstmp, ":", "slide=", best_slide_i, "ratio=", ratio, '\t', img_text)
 
-    # print(result)
+    with open("timestamps.txt", "w") as f:
+        f.write(json.dumps(result, ensure_ascii=False))
