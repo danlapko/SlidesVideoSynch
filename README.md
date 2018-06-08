@@ -5,6 +5,8 @@ You need to have video and pdf slides.
 
 ![Alt Text](https://github.com/danlapko/SlidesVideoSynch/blob/master/docs/result2.gif?raw=true)
 
+parent repo https://github.com/xamgore/au-camera-timestamps/tree/master/utils
+
 #### Dependencies
 Install opencv and opencv-python
 
