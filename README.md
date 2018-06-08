@@ -1,7 +1,8 @@
 ## SlidesVideoSynch
 Synchronization of presentations slides and lectures videos.
 
-You need to have video and pdf slides.  
+You need to have video and pdf slides. 
+![Alt Text](https://media.giphy.com/media/vFKqnCdLPNOKc/giphy.gif)
 #### Dependencies
 Install opencv and opencv-python
 
