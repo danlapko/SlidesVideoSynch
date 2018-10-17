@@ -29,26 +29,26 @@ def strings_similarity(str1, str2):
     return SequenceMatcher(None, str1, str2).ratio()
 
 
-def best_slide(img_text, slide_texts, len_text_tresh):
-    best_ratio = float('inf')
-    best_ratio_cnt = 1
+def best_slide_ocr(img_text, slide_texts, len_text_tresh):
+    best_score = float('inf')
+    best_score_cnt = 1
     best_i = -1
     for i, slide in enumerate(slide_texts):
         if len(slide) == 0 or len(img_text) / len(slide) <= len_text_tresh:
             continue
-        ratio = (editdistance.eval(img_text, slide) - (len(slide) - len(img_text))) / len(img_text)
+        score = (editdistance.eval(img_text, slide) - (len(slide) - len(img_text))) / len(img_text)
         # dist = strings_similarity(img_text, slide)
-        if ratio == best_ratio:
-            best_ratio_cnt += 1
+        if score == best_score:
+            best_score_cnt += 1
 
-        if ratio < best_ratio:
+        if score < best_score:
             best_i = i
-            best_ratio = ratio
-            best_ratio_cnt = 1
+            best_score = score
+            best_score_cnt = 1
 
-    if best_ratio_cnt > 1:
-        return -1, best_ratio
-    return best_i, best_ratio
+    if best_score_cnt > 1:
+        return -1, best_score
+    return best_i, best_score
 
 
 if __name__ == "__main__":
@@ -64,7 +64,7 @@ if __name__ == "__main__":
     img_text = get_image_text(img)
     img_text = filter_text(img_text)
 
-    best_slide_i, ratio = best_slide(img_text, slides, 0.1)
+    best_slide_i, ratio = best_slide_ocr(img_text, slides, 0.1)
     print("======== best_slide=", best_slide_i, "ratio=", ratio, "=======")
     print(slides[best_slide_i])
     print(img_text)

@@ -22,11 +22,33 @@ def get_contours(frame):
     return contours
 
 
-def video_to_slide_imgs(file_path, time_period=1, max_cntr_area=0.95, min_cntr_area=0.3):
+def get_frames(cap, every):
+    frames = []
+    i_frame = 0
+    print("reading frames ...")
+    while True:
+        ret, frame = cap.read()
+        if cv2.waitKey(1) & 0xFF == ord('q') or not ret:
+            break
+
+        if i_frame % every == 0:
+            tmstmp = int(cap.get(cv2.CAP_PROP_POS_MSEC))
+            frames.append((tmstmp, frame))
+            if i_frame % (every * 10) == 0:
+                print("\tframe", i_frame)
+        i_frame += 1
+    print("reading frames done")
+
+    return frames
+
+
+def video_to_slide_imgs(file_path, every_frame=1, max_cntr_area=0.95, min_cntr_area=0.3):
     cap = cv2.VideoCapture(file_path)
 
     if not cap.isOpened():
         raise FileExistsError("Cannot open file", file_path)
+
+    frames = get_frames(cap, every_frame)
 
     width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))  # float
     height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))  # float
@@ -34,21 +56,11 @@ def video_to_slide_imgs(file_path, time_period=1, max_cntr_area=0.95, min_cntr_a
     base_cnt = np.array([[0, 0], [0, height], [width, height], [width, 0]])
     base_area = cv2.contourArea(base_cnt)
 
-    frames_period = time_period * cap.get(cv2.CAP_PROP_FPS)
-    frames_from_last_tick = 0
-    result_imgs = dict()
-    i_frame = frames_period-1
-    while True:
-        ret, frame = cap.read()
-        tmstmp = int(cap.get(cv2.CAP_PROP_POS_MSEC))
-        i_frame += 1
-
-        if cv2.waitKey(1) & 0xFF == ord('q') or not ret:
-            break
-
-        frames_from_last_tick += 1
-        if frames_from_last_tick < frames_period:
-            continue
+    # frames_period = time_period * cap.get(cv2.CAP_PROP_FPS)
+    print()
+    print(f"{len(frames)} frames to filter and crop ...")
+    result = []
+    for i_frame, (tmstmp, frame) in enumerate(frames):
 
         frame = add_black_border_to_frame(frame, bordersize=3)
         contours = get_contours(frame)  # 10 largest contours
@@ -68,9 +80,10 @@ def video_to_slide_imgs(file_path, time_period=1, max_cntr_area=0.95, min_cntr_a
             if 4 <= len(approx_cnt) <= 4:
                 # cropping from frame and perspective transformation of contour
                 trnsfrmed_img = four_point_transform(frame, approx_cnt)
-                # print(trnsfrmed_img.shape)
-                frames_from_last_tick = 0
-                result_imgs[tmstmp] = trnsfrmed_img.copy()
+                result.append((tmstmp, trnsfrmed_img))
+                print(f"\taccepted frame {i_frame}")
                 break
 
-    return result_imgs
+    print(f"filtering-cropping done")
+
+    return result

@@ -42,6 +42,7 @@ pip install editdistance
 python3 ./run.py --slides_path "tests/example.pdf" --video_path "tests/example.mp4" --output_path "timestamps.txt" --lang "rus+eng"
 ```
 
+matcher.py uses opencv feature matcher, but works worse then ocr.
 #### Useful ffmpeg commands
 
 `ffmpeg -ss 00:00:03 -i ./example.mp4 -c copy -t 10 ./example.mp4` -cut 10 secs from 00:00:03  
